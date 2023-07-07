@@ -1,0 +1,227 @@
+#!/usr/bin/env python3
+##
+## EPITECH PROJECT, 2023
+## B-MAT-400-PAR-4-1-208dowels
+## File description:
+## 208dowels
+##
+
+import sys
+
+def help_usage() -> None:
+    print("""USAGE
+    ./208dowels O0 O1 O2 O3 O4 O5 O6 O7 O8
+    DESCRIPTION
+    Oi    size of the observed class""")
+    sys.exit(0)
+
+def check_args() -> None:
+
+    if (len(sys.argv) == 2 and sys.argv[1] == "-h"):
+        help_usage()
+    elif (len(sys.argv) != 10):
+            sys.exit(84)
+    else:
+        arg = []
+        i = 1
+        try:
+            while (i < len(sys.argv)):
+                arg.append(int(sys.argv[i]))
+                i += 1
+        except:
+            exit(84)
+        for i in range(1, 10):
+            if (sys.argv[i].isdigit() == False):
+                sys.exit(84)
+            if (int(sys.argv[i]) < 0):
+                sys.exit(84)
+            if (int(sys.argv[i]) > 10000):
+                sys.exit(84)
+        return arg
+
+distribution = [[0, 99, 90, 80, 70, 60, 50, 40, 30, 20, 10, 5, 3, 1],
+[1, 0.00, 0.02, 0.06, 0.15, 0.27, 0.45, 0.71, 1.07, 1.64, 2.71, 3.84, 5.41, 6.63],
+[2, 0.02, 0.21, 0.45, 0.71, 1.02, 1.39, 1.83, 2.41, 3.22, 4.61, 5.99, 7.82, 9.21],
+[3, 0.11, 0.58, 1.01, 1.42, 1.87, 2.37, 2.95, 3.66, 4.64, 6.25, 7.81, 9.84, 11.34],
+[4, 0.30, 1.06, 1.65, 2.19, 2.75, 3.36, 4.04, 4.88, 5.99, 7.78, 9.49, 9.84, 11.34],
+[5, 0.55, 1.61, 2.34, 3.00, 3.66, 4.35, 5.13, 6.06, 7.29, 9.24, 11.07, 11.67, 13.28],
+[6, 0.7, 2.20, 3.07, 3.83, 4.57, 5.35, 6.21, 7.23, 8.56, 10.64, 12.59, 15.03, 16.81],
+[7, 1.24, 2.83, 3.82, 4.67, 5.49, 6.35, 7.28, 8.38, 9.80, 12.02, 14.07, 16.62, 18.48],
+[8, 1.65, 3.49, 4.59, 5.53, 6.42, 7.34, 8.35, 9.52, 11.03, 13.36, 15.51, 18.17, 20.09],
+[9, 2.09, 4.17, 5.38, 6.39, 7.63, 8.34, 9.41, 10.66, 12.24, 14.68, 16.92, 19.68, 21.67],
+[10, 2.56, 4.87, 6.18, 7.27, 8.30, 9.34, 10.47, 11.78, 13.44, 15.99, 18.31, 21.16, 23.21]]
+
+def factorial(arg) -> float:
+
+    i = 2
+    end = 1
+    while i <= arg:
+        end *= i
+        i += 1
+    return end
+
+def combo(arg, comb) -> float:
+
+    int1 = factorial(arg)
+    num = factorial(comb)
+    int2 = factorial(comb - arg)
+    int1 *= int2
+    return num / int1
+
+def square(ox, tx) -> float:
+
+    end = 0
+    for i in range(0, len(ox)):
+        end += pow(ox[i] - tx[i], 2) / tx[i]
+    return end
+
+def binomiale(arg) -> float:
+
+    end = 0
+    for count in range(0, len(arg)):
+        end += (count * arg[count])
+    end /= 100 * 100
+    return end
+
+def validity(validity, fit) -> str:
+
+    find = False
+    i = 1
+    while i != 13:
+        if distribution[fit][i] <= validity <= distribution[fit][i + 1]:
+            max = distribution[0][i]
+            min = distribution[0][i + 1]
+            find = True
+            break
+        i += 1
+    if not find:
+        if distribution[fit][1] <= validity:
+            max = distribution[0][13]
+            result = 'P < ' + str(max) + '%'
+            return result
+        if distribution[fit][13] >= validity:
+            max = distribution[0][1]
+            result = 'P > ' + str(max) + '%'
+            return result
+
+    result = str(min) + '% < P < ' + str(max)+'%'
+    return result
+
+def calculer_arg_Tx_X_int_inc(arg, Tx) -> list:
+
+    X = []
+    int = 0
+    inc = 0
+
+    while int < len(arg):
+        X.append(str(inc))
+        if int - 1 >= 0 and int + 1 < len(arg) and arg[int] < 10:
+            if arg[int - 1] + arg[int] < arg[int + 1] + arg[int]:
+                arg[int] += arg[int - 1]
+                arg.pop(int - 1)
+                X[int - 1] += '-' + str(inc)
+                inc += 1
+                X[int] = str(inc)
+                Tx[int] += Tx[int - 1]
+                Tx.pop(int - 1)
+                while arg[int - 1] < 10:
+                    arg[int] += arg[int - 1]
+                    arg.pop(int - 1)
+                    if int < len(Tx) - 1:
+                        Tx[int] += Tx[int - 1]
+                        Tx.pop(int - 1)
+                    X[int - 1] += '-' + str(inc)
+                    inc += 1
+                    if inc < 9:
+                        X.append(str(inc))
+                    X.pop(int)
+            else:
+                Tx[int] += Tx[int + 1]
+                Tx.pop(int+1)
+        int += 1
+        inc += 1
+
+    return arg, Tx, X, int, inc
+
+def tx_ox_calculer(arg, Tx, X, count, inc) -> list:
+
+    arg, X, count, inc = calcul_tab(arg, X, count, inc)
+    ox = tab_printer(arg, X, Tx, count)
+    return ox, Tx
+
+def counter(arg, binomial) -> list:
+
+    TX = []
+    i = 0
+    for count in range(0, len(arg) - 1):
+        result = 100 * combo(count, 100) * pow(binomial, count) * pow((1 - binomial), 100 - count)
+        i += result
+        TX.append(result)
+    TX.append(100 - i)
+    return TX
+
+def calcul_tab(arg, X, count, inc) -> list:
+    if arg[len(arg) - 1] < 10:
+        arg[count - 1] += arg[count - 2]
+        arg.pop(count - 2)
+        X[count - 2] += '-' + str(inc - 1)
+        X.pop(count - 1)
+        inc += 1
+        while arg[count - 2] < 10:
+            arg[count] += arg[count - 1]
+            arg.pop(count - 1)
+            X[count - 1] += '-' + str(inc)
+            inc += 1
+            X.pop(count)
+    return arg, X, count, inc
+
+def tab_printer(arg, X, Tx, count) -> list:
+
+    for i in range(0, len(X)):
+        tmp = X[i].split('-')
+        if len(tmp) != 1:
+            X[i] = tmp[0] + '-' + tmp[len(tmp) - 1]
+        if i + 1 == len(X):
+            X[i] = tmp[0] + '+'
+    print("  x\t| ", end="")
+
+    for i in X:
+        print(i + '\t| ', end="")
+    print("Total")
+
+    Ox = []
+    for i in arg:
+        Ox.append(i)
+    print("  Ox\t| ", end="")
+
+    for count in range(0, len(Ox)):
+        print(str(Ox[count]) + "\t| ", end="")
+    print("100")
+    print("  Tx\t| ", end="")
+
+    for count in range(0, len(Tx)):
+        print("%.1f" % Tx[count] + "\t| ", end="")
+    print("100")
+    return Ox
+
+def printer(binomial, Ox, Tx) -> None:
+    print("Distribution:\t\t\tB(100, %.4f)" % binomial)
+    sum = square(Ox, Tx)
+    print("Chi-squared:\t\t\t%.3f"%sum)
+    degr = len(Ox) - 2
+    print("Degrees of freedom:\t\t{}".format(degr))
+    print("Fit validity:\t\t\t" + validity(sum, degr))
+
+def main() -> None:
+
+    arg = check_args()
+
+    if (len(arg) == 9):
+        binomial = binomiale(arg)
+        TX = counter(arg, binomial)
+        distribution, Tx, X, count, inc = calculer_arg_Tx_X_int_inc(arg, TX)
+        Ox, Tx = tx_ox_calculer(distribution, Tx, X, count, inc)
+        printer(binomial, Ox, Tx)
+
+if __name__ == "__main__":
+    main()

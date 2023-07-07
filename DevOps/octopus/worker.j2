@@ -1,0 +1,13 @@
+[Unit]
+Description=Worker Service
+
+[Service]
+ExecStart=java -jar /var/www/worker/target/worker-jar-with-dependencies.jar
+Environment=REDIS_HOST={{ redis' }}
+Environment=POSTGRESQL_USER={{ db_username }}
+Environment=POSTGRESQL_PASSWORD={{ db_password }}
+Environment=POSTGRESQL_HOST={{ 'postgresql' }}
+Environment=POSTGRESQL_PORT={{ db_port }}
+Environment=POSTGRESQL_DB={{ db_name }}
+WorkingDirectory=/var/www/worker/target
+Restart=always

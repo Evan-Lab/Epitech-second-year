@@ -1,0 +1,9 @@
+[Unit]
+Description=Poll Service
+
+[Service]
+Environment=REDIS_HOST={{ redis }}
+ExecStart=flask run --host=0.0.0.0
+User={{ remote_user }}
+WorkingDirectory=/var/www/poll/
+Restart=always

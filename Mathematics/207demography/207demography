@@ -1,0 +1,216 @@
+#!/usr/bin/env python3
+##
+## EPITECH PROJECT, 2023
+## 207demography
+## File description:
+## 207demography
+##
+
+import sys
+import math
+import csv
+
+path = "207demography_data.csv"
+years = []
+
+def help_usage() -> None:
+    print("""USAGE
+    ./207demography code [...]+
+    DESCRIPTION
+    code    country code""")
+    sys.exit(0)
+
+def check_arg() -> None:
+
+    if (len(sys.argv) == 2 and sys.argv[1] == "-h"):
+        help_usage()
+    elif (len(sys.argv) < 2):
+        sys.exit(84)
+
+def open_csv() -> list:
+
+    table = []
+    with open(path, 'r') as csv_file:
+        reader = csv.reader(csv_file, delimiter=';')
+        next(reader)
+        for row in reader:
+            table.append(row)
+        return table
+
+def years_delimiter() -> list:
+
+    year = 1960
+    while year <= 2017:
+        years.append(year)
+        year += 1
+    return years
+
+def country_loader(table, indexation) -> list:
+    country =[]
+    i = 0
+    while i < len(table):
+        country.append(table[i][indexation])
+        i+=1
+    return country
+
+def countries_loader(table, indexation) -> list:
+    countries =[]
+    i = 0
+    j = 0
+    while i < len(table):
+        try:
+            indexation[j]
+        except:
+            break
+        if i == indexation[j]:
+            countries.append(table[i])
+            j+=1
+        i+=1
+    return countries
+
+def compare_country(countries_lenght, arg, countries_in_world) -> list:
+    print("Country: ", sep ="", end="")
+    indexation = []
+    i = 0
+    j = 0
+    while i < len(countries_lenght):
+        try:
+            arg[j]
+        except:
+            break
+        if arg[j] == countries_lenght[i] and j == len(arg) -1:
+            print(countries_in_world[i])
+            indexation.append(i)
+            j += 1
+            i = 0
+        elif arg[j] == countries_lenght[i]:
+            print(countries_in_world[i], " ", sep=',' , end ="")
+            indexation.append(i)
+            j += 1
+            i = 0
+        i += 1
+    indexation.sort()
+    return(indexation)
+
+def countries_total(countries) -> list:
+    i = 0
+    all_countries = [0] * 58
+    for i in range(0, len(countries), 1):
+        for j in range(2, len(countries[i]), 1):
+            all_countries[j - 2] += int(countries[i][j])
+    return all_countries
+
+def get_a(sums) -> float:
+    a = (sums[0] * sums[2] - sums[1] * sums[3]) / (len(years) * sums[2] - sums[1] ** 2)
+    return a
+
+def get_b(sums) -> float:
+    b = ((len(years) * sums[3]) - (sums[0] * sums[1])) / ((len(years) * sums[2]) - math.pow(sums[1], 2))
+    return b
+
+def get_range_1(tab) -> list:
+    sums = [0, 0, 0, 0]
+
+    for i in range(0, len(tab), 1):
+        sums[0] += tab[i]
+        sums[1] += years[i]
+        sums[2] += pow(years[i], 2)
+        sums[3] += tab[i]*years[i]
+    return sums
+
+def print_rms_and_population_fit1(res, all_countries, a, b) -> None:
+
+    for i in range(0, len(all_countries)):
+        func = years[i] * b + a
+        res += ((func - all_countries[i]) ** 2 / len(all_countries))
+    print("    Root-mean-square deviation: {:.2f}".format(math.sqrt(res)/1000000))
+    print("    Population in 2050: {:.2f}".format((2050 * b + a)/1000000))
+
+def Fit1(all_countries) -> None:
+    print("Fit1")
+    res = 0
+    sums = get_range_1(all_countries)
+    a = get_a(sums)
+    b = get_b(sums)
+    if a >= 0:
+        print("    Y = {:.2f} X + {:.2f}".format(b/1000000, a/1000000))
+    else:
+        print("    Y = {:.2f} X - {:.2f}".format(b/1000000, a/1000000 * -1))
+    print_rms_and_population_fit1(res, all_countries, a, b)
+
+def get_range_2(tab) -> list:
+    sums = [0, 0, 0, 0]
+
+    for i in range(0, len(tab)):
+        sums[0] += years[i]
+        sums[1] += tab[i]
+        sums[2] += pow(tab[i], 2)
+        sums[3] += tab[i] * years[i]
+    return sums
+
+def get_covariance_and_variances(all_countries):
+    x_mean = sum(years) / len(years)
+    y_mean = sum(all_countries) / len(all_countries)
+    cov_xy = 0
+    var_x = 0
+    var_y = 0
+    for i in range(len(all_countries)):
+        cov_xy += (years[i] - x_mean) * (all_countries[i] - y_mean)
+        var_x += (years[i] - x_mean) ** 2
+        var_y += (all_countries[i] - y_mean) ** 2
+    cov_xy /= len(all_countries)
+    var_x /= len(years)
+    var_y /= len(all_countries)
+    return cov_xy, var_x, var_y
+
+def print_rmsd_and_population(res, all_countries, a, b) -> None:
+    for i in range(0, len(all_countries)):
+        func = (years[i] - a) / b
+        res += ((func - all_countries[i]) ** 2 / len(all_countries))
+    print("    Root-mean-square deviation: ", format(math.sqrt(res)/1000000, ".2f"), sep="")
+    print("    Population in 2050: ", format(((2050 - a) / b/1000000), ".2f"), sep="")
+
+def print_correlation(all_countries) -> None:
+    cov_xy, var_x, var_y = get_covariance_and_variances(all_countries)
+    corr = cov_xy / math.sqrt(var_x * var_y)
+    print("Correlation: {:.4f}".format(corr))
+
+def Fit2(all_countries) -> None:
+    print("Fit2")
+    res = 0
+    sums = get_range_2(all_countries)
+    a = get_a(sums)
+    b = get_b(sums)
+    if b >= 0:
+        print("    X = {:.2f} Y + {:.2f}".format(b*1000000, a))
+    else:
+        print(f"    X = {b:.2f} Y - {-a:.2f}")
+    print_rmsd_and_population(res, all_countries, a, b)
+    print_correlation(all_countries)
+
+def charging_data(args) -> list:
+    table = open_csv()
+    countries_letters = country_loader(table, 1)
+    countries_in_world = country_loader(table, 0)
+    years = years_delimiter()
+    indexation = compare_country(countries_letters, args, countries_in_world)
+    countries = countries_loader(table, indexation)
+    all_countries = countries_total(countries)
+    return all_countries
+
+def main() -> None:
+
+    check_arg()
+
+    if (len(sys.argv) >= 2):
+        args = []
+        i = 1
+        while (i < len(sys.argv)):
+            args.append(sys.argv[i])
+            i += 1
+        all_countries = charging_data(args)
+        Fit1(all_countries)
+        Fit2(all_countries)
+
+if __name__ == "__main__":
+    main()

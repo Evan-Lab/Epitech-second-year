@@ -1,0 +1,14 @@
+[poll]
+192.168.122.61 ansible_host=192.168.122.61 ansible_ssh_private_key_file=/home/viktor/.ssh/id_ed25519
+
+[redis]
+192.168.122.65 ansible_host=192.168.122.65 ansible_ssh_private_key_file=/home/viktor/.ssh/id_ed25519
+
+[postgresql]
+192.168.122.53 ansible_host=192.168.122.53 ansible_ssh_private_key_file=/home/viktor/.ssh/id_ed25519
+
+[result]
+192.168.122.162 ansible_host=192.168.122.162 ansible_ssh_private_key_file=/home/viktor/.ssh/id_ed25519
+
+[worker]
+192.168.122.18 ansible_host=192.168.122.18 ansible_ssh_private_key_file=/home/viktor/.ssh/id_ed25519

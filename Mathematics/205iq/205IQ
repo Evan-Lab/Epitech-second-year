@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+##
+## EPITECH PROJECT, 2023
+## 205IQ
+## File description:
+## 205IQ
+##
+
+import sys
+import math
+
+################# HELP #################
+
+def print_help() ->None:
+    print("""USAGE
+    ./205IQ u s [IQ1] [IQ2]
+    DESCRIPTION
+    u mean
+    s standard deviation
+    IQ1 minimum IQ
+    IQ2 maximum IQ""")
+
+################# CHECK ARGS #################
+
+def check_args() -> None:
+
+    if (len(sys.argv) == 2 and sys.argv[1] == "-h"):
+        print_help()
+        exit(0)
+    elif (len(sys.argv) != 3 and len(sys.argv) != 4 and len(sys.argv) != 5):
+        print("Invalid number of arguments")
+        exit(84)
+    if (len(sys.argv) == 4):
+        try:
+            u = float(sys.argv[1])
+            s = float(sys.argv[2])
+            iq1 = float(sys.argv[3])
+            if (u <= 0 or u > 200 or s < 0 or iq1 < 0 or iq1 > 200):
+                raise ValueError()
+        except ValueError:
+            print("Invalid input for mean and/or standard deviation.")
+            exit(84)
+    if (len(sys.argv) == 5):
+        try:
+            u = float(sys.argv[1])
+            s = float(sys.argv[2])
+            iq1 = float(sys.argv[3])
+            iq2 = float(sys.argv[4])
+            if (u <= 0 or u > 200 or s < 0 or iq1 < 0 or iq1 > 200 or iq2 < 0 or iq2 > 200 or iq2 < iq1):
+                raise ValueError()
+        except ValueError:
+            print("Invalid input for mean and/or standard deviation.")
+            exit(84)
+    if (len(sys.argv) == 3 and sys.argv[1] != "-h"):
+        try:
+            mean = float(sys.argv[1])
+            std_dev = float(sys.argv[2])
+            if (mean <= 0 or mean > 200 or std_dev < 0):
+                raise ValueError()
+        except ValueError:
+            print("Invalid input for mean and/or standard deviation.")
+            exit(84)
+
+################# NORMAL DISTRIBUTION #################
+
+def normal_distribution(x, mean, std_dev):
+    return (1 / (std_dev * math.sqrt(2 * math.pi))) * math.exp(-((x - mean)**2) / (2 * std_dev**2))
+
+################# INTEGRATE #################
+
+def integrate(f, a, b) -> tuple:
+    n = 1000000
+    dx = (b - a) / n
+    integral = 0.5 * (f(a) + f(b))
+    for i in range(1, n):
+        x = a + i * dx
+        integral += f(x)
+    return integral * dx, None
+
+################# NORMAL DENSITY #################
+def normal_density(x, mean, std_dev) -> float:
+    return (1 / (std_dev * math.sqrt(2 * math.pi))) * math.exp(-((x - mean)**2) / (2 * std_dev**2))
+
+################# PERCENTAGE BELOW #################
+
+def percentage_below(iq1, mean, std_dev) -> float:
+    integral, _ = integrate(lambda t: normal_density(t, mean, std_dev), 0, iq1)
+    return integral * 100
+
+################# PERCENTAGE BETWEEN #################
+
+def percentage_between(x1, x2, mean, std_dev) -> float:
+    integral, _ = integrate(lambda t: normal_density(t, mean, std_dev), x1, x2)
+    return integral * 100
+
+################# MAIN #################
+
+def main() -> None:
+
+    check_args()
+
+    if (len(sys.argv) == 4):
+        u = float(sys.argv[1])
+        s = float(sys.argv[2])
+        iq1 = int(float(sys.argv[3]))
+        print(str(round(percentage_below(iq1, u, s), 1)) + "% of people have an IQ inferior to " + str(iq1))
+
+    if (len(sys.argv) == 5):
+        u = float(sys.argv[1])
+        s = float(sys.argv[2])
+        iq1 = int(float(sys.argv[3]))
+        iq2 = int(float(sys.argv[4]))
+        print(str(round(percentage_between(iq1, iq2, u, s), 1)) + "% of people have an IQ between " + str(iq1) + " and " + str(iq2))
+
+    if (len(sys.argv) == 3):
+        mean = float(sys.argv[1])
+        std_dev = float(sys.argv[2])
+        with open("data", "w") as f:
+            for i in range(201):
+                print("{0} {1:.5f}".format(i, normal_distribution(i, mean, std_dev)))
+
+if __name__ == "__main__":
+    main()

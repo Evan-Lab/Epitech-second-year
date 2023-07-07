@@ -1,0 +1,7 @@
+MyGKrellm
+*.o
+*.gcda
+*.gcno
+*.gch
+a.out
+.vscode

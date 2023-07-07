@@ -1,0 +1,32 @@
+- name: Create result directory
+  file:
+    path: /var/www/result
+    state: directory
+
+- name: Extract result.tar
+  ansible.builtin.unarchive:
+    src: result.tar
+    dest: /var/www/result/
+
+- name: Install node.js
+  become: true
+  apt:
+    name:
+      - nodejs
+
+- name: Install requirement for result
+  ignore_errors: true
+  npm:
+    path: /var/www/result/
+
+- name: Set service
+  become: true
+  ansible.builtin.template:
+    src: ./result.j2
+    dest: /etc/systemd/system/result.service
+    mode: '0644'
+
+- name: Start service result, if not started
+  ansible.builtin.service:
+    name: result.service
+    state: started

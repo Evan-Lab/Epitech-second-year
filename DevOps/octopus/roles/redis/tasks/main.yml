@@ -1,0 +1,19 @@
+- name: Install redis
+  become: true
+  apt:
+    name:
+      - redis-server
+
+- name: Upload redis.conf
+  ansible.builtin.copy:
+    src: roles/redis/files/redis.conf
+    dest: /etc/redis/redis.conf
+    owner: redis
+    group: redis
+    mode: 0640
+  register: override
+
+- name: Launch Redis
+  ansible.builtin.service:
+    name: redis.service
+    state: started

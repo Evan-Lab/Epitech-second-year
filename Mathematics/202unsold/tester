@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+import unittest
+
+from test202unsold import check_args
+from test202unsold import joint_law
+from test202unsold import z_law
+from test202unsold import expected_value
+from test202unsold import variance
+
+class TestYams(unittest.TestCase):
+
+    def test_check_args(self):
+        # Test that check_args raises an error with incorrect number of arguments
+        with self.assertRaises(SystemExit) as cm:
+            check_args([])
+        self.assertEqual(cm.exception.code, 84)
+
+        # At least two arguments are required
+        with self.assertRaises(SystemExit) as cm:
+            check_args([1,2,3,4])
+        self.assertEqual(cm.exception.code, 84)
+
+        # Test that check_args raises an error with non-integer arguments
+        with self.assertRaises(SystemExit) as cm:
+           check_args(["test", "test"])
+        self.assertEqual(cm.exception.code, 84)
+
+        # Test that check_args raises an error with arguments less than or equal to 50
+        with self.assertRaises(SystemExit) as cm:
+           check_args([30, 40])
+        self.assertEqual(cm.exception.code, 84)
+
+    def test_joint_law(self):
+        # Test the first value of X_Y
+        X_Y, _, _ = joint_law(100, 100)
+        self.assertAlmostEqual(X_Y[0][0], 0.06612244897959184, places=3)
+
+        #Test the last value of X_Y
+        X_Y, _, _ = joint_law(200, 200)
+        self.assertAlmostEqual(X_Y[4][4], 0.031141868512110725, places=3)
+
+    def test_z_law(self):
+        # Test the first value of Z
+        X_Y, _, _ = joint_law(100, 100)
+        Z = z_law(X_Y)
+        self.assertAlmostEqual(Z[0], 0.06612244897959184, places=3)
+
+        # Test the last value of Z
+        X_Y, _, _ = joint_law(200, 200)
+        Z = z_law(X_Y)
+        self.assertAlmostEqual(Z[8], 0.031141868512110725, places=3)
+
+    def test_variance(self):
+        # Test the variance of X for a given law
+        law = [0.2, 0.3, 0.25, 0.15, 0.1]
+        ev = expected_value(law)
+        var = variance(law, ev)
+        self.assertAlmostEqual(var, 152.75, places=1)
+
+    def test_expected_value(self):
+        # Test the expected value of X for a given joint law
+        X_Y = [[0.02, 0.03, 0.02, 0.01, 0.02], [0.03, 0.04, 0.03, 0.02, 0.03], [0.02, 0.03, 0.02, 0.01, 0.02], [0.01, 0.02, 0.01, 0.00, 0.01], [0.02, 0.03, 0.02, 0.01, 0.02]]
+        ev = expected_value(X_Y[0])
+        self.assertAlmostEqual(ev, 3.8, places=2)
+
+if __name__ == '__main__':
+    unittest.main()

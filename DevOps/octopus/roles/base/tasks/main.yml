@@ -1,0 +1,13 @@
+- name: Install useful packages (GIT)
+  become: true
+  apt:
+    name:
+      - git
+    state: present
+    update_cache: yes
+
+- name: Update apt packages
+  become: true
+  apt:
+    upgrade: yes
+    update_cache: yes

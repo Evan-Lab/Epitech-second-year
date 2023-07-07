@@ -1,0 +1,22 @@
+FROM jenkins/jenkins:lts-jdk11
+
+EXPOSE 8080
+
+WORKDIR /var/jenkins_home/
+
+USER root
+RUN apt-get update && apt-get install -y gcc make
+
+USER jenkins
+ENV USER_CHOCOLATEEN_PASSWORD=choco
+ENV USER_VAUGIE_G_PASSWORD=vaugie
+ENV USER_I_DONT_KNOW_PASSWORD=dont
+ENV USER_NASSO_PASSWORD=nasso
+ENV JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+
+COPY --chown=jenkins:jenkins plugins.txt /usr/share/jenkins/ref/plugins.txt
+
+RUN jenkins-plugin-cli -f /usr/share/jenkins/ref/plugins.txt
+
+COPY --chown=jenkins:jenkins ./my_marvin.yml ./jenkins.yaml
+COPY --chown=jenkins:jenkins ./job_dsl.groovy ./job_dsl.groovy

@@ -1,0 +1,178 @@
+#!/usr/bin/env python3
+##
+## EPITECH PROJECT, 2023
+## 201yams
+## File description:
+## 201yams
+##
+
+import sys, math
+
+#### help_usage ###
+
+def help_usage():
+    print("USAGE")
+    print("\t./201yams d1 d2 d3 d4 d5 c\n")
+    print("DESCRIPTION")
+    print("\td1\tvalue of the first die (0 if not thrown)")
+    print("\td2\tvalue of the second die (0 if not thrown)")
+    print("\td3\tvalue of the third die (0 if not thrown)")
+    print("\td4\tvalue of the fourth die (0 if not thrown)")
+    print("\td5\tvalue of the fifth die (0 if not thrown)")
+    print("\tc\texpected combination")
+
+############################################
+
+#### apparition function ####
+
+def get_apparition(nb):
+    apparition = 0
+    if die_1 == nb:
+        apparition += 1
+    if die_2 == nb:
+        apparition += 1
+    if die_3 == nb:
+        apparition += 1
+    if die_4 == nb:
+        apparition += 1
+    if die_5 == nb:
+        apparition += 1
+    return apparition
+
+############################################
+
+#### check_number ####
+
+def error_number(char, check = 0):
+    try:
+        nb = int(char)
+    except:
+        raise Exception("The dice need to be only between 1 and 6 (0 if not thrown)\n")
+    if check == 1:
+        if nb > 6 or nb <= 0:
+            raise Exception("Between 1 and 6 !\n")
+    if nb > 6 or nb < 0:
+        raise Exception("Between 0 and 6 !\n")
+    return nb
+
+############################################
+
+#### Binomial function ####
+
+def binomial_function(a, b):
+    try:
+        resultat = (math.factorial(a) / (math.factorial(b) * math.factorial(a - b))) * pow((1 / 6), b) * pow((5 / 6), (a - b))
+    except:
+        raise Exception("There is an error\n")
+    return resultat
+
+############################################
+
+#### resultat function ####
+
+def result_function(dice, nb):
+    resultat = 0.0
+    apparition = get_apparition(nb)
+    if dice < apparition:
+        resultat = 1
+    else:
+        for n in range(dice - apparition, 6 - apparition):
+            resultat += binomial_function(5 - apparition, n)
+    return resultat * 100
+
+############################################
+
+#### straight function ####
+
+def straight_function(nb):
+    tab = set()
+    tab.update([die_1, die_2, die_3, die_4, die_5])
+    if len(tab) == 1:
+        tab.add(0)
+    pres = 6
+    if tab.issuperset([nb]):
+        pres = 5
+    if tab.issuperset([0]):
+        result = math.factorial(pres - int(len(tab))) / pow(6, pres - int(len(tab)))
+    else:
+        result = math.factorial(pres - int(len(tab))) / pow(6, pres - int(len(tab)))
+    return result * 100
+
+############################################
+
+#### full function ####
+
+def full_function(nb_1, nb_2):
+    resultat = 1.0
+    apparition_1 = get_apparition(nb_1)
+    apparition_2 = get_apparition(nb_2)
+    if (apparition_1 > 3):
+        apparition_1 = 3
+    if (apparition_2 > 2):
+        apparition_2 = 2
+    for i in range(5 - apparition_1 - apparition_2, 6 - apparition_1 - apparition_2):
+        resultat *= binomial_function(5 - apparition_1 - apparition_2, i)
+    if resultat > 0.1:
+        resultat = 0.1
+    return resultat * 1000
+
+############################################
+
+#### search_compute ####
+
+def search_compute(string):
+    arg = string.split('_')
+    combination = arg[0]
+    if len(arg) == 2:
+        nb = error_number(arg[1], 1)
+        print("Chances to get a " + str(nb) + " " + combination, end='')
+        if combination == "pair":
+            result = result_function(2, nb)
+        elif combination == "three":
+            result = result_function(3, nb)
+            print("-of-a-kind", end='')
+        elif combination == "four":
+            result = result_function(4, nb)
+            print("-of-a-kind", end='')
+        elif combination == "yams":
+            result = result_function(5, nb)
+        elif combination == "straight":
+            result = straight_function(nb)
+        else:
+            raise Exception("invalid combination\n")
+        print(": " + "%.2f" % result + "%")
+    elif len(arg) == 3:
+        if combination == "full":
+            nb1 = error_number(arg[1], 1)
+            nb2 = error_number(arg[2], 1)
+            result = full_function(nb1, nb2)
+        else:
+            raise Exception("only combination 'full' need 2 excepted value\n")
+        print("Chances to get a " + str(nb1) + " full of "
+              + str(nb2) + ": " + "%.2f" % result + "%")
+    else:
+        raise Exception("invalid combination\n")
+
+############################################
+
+#### MAIN Function ####
+
+try:
+    if len(sys.argv) == 2:
+        if sys.argv[1] == "-h":
+            help_usage()
+            exit(0)
+    elif len(sys.argv) == 7:
+        resultat = 0.0
+        combination = ""
+        die_1 = error_number(sys.argv[1])
+        die_2 = error_number(sys.argv[2])
+        die_3 = error_number(sys.argv[3])
+        die_4 = error_number(sys.argv[4])
+        die_5 = error_number(sys.argv[5])
+        search_compute(sys.argv[6])
+    else:
+        raise Exception("Invalid number of argument\n")
+except Exception as error:
+    sys.stdout.write(str(error))
+    exit(84)

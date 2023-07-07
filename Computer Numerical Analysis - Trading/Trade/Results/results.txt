@@ -1,0 +1,66 @@
+Table of the all different strategy used for tests
+
+Combined old Bolliger + Ichimoku Strategies
+1 = 1103
+2 = 690
+3 = 596
+
+Combined Strategy Bollinger + Ichimoku + RSI Strategies
+1 = 1000
+2 = 664
+3 = 733
+
+
+
+Combined strategy Bollinger + Ichimoku Strategies
+1 = 1089
+2 = 748
+3 = 578
+
+Combined strategy old Bollinger RSI Strategies
+1 = 1020
+2 = 664
+3 = 423
+
+Combined strategy Bollinger + rsi Strategies
+1 = 1020
+2 = 664
+3 = 423
+
+Bollinger Strategy
+1 = 1169
+2 = 717
+3 = 611
+
+Ichimoku Strategy
+1 = 1052
+2 = 776
+3 = 600
+
+
+RSI Strategy
+1 = 1000
+2 = 692
+3 = 0
+
+Bollinger Strategy + 10% and - 10%
+1 = 1128
+2 = 885
+3 = 614
+
+Combined strategy Bollinger + Ichimoku full sell and full buy
+1 = 1101
+2 = 831
+3 = 613
+
+Bollinger Strategy + 10% and - 10% and STOP LOSS 10% in 4 hours
+1 = 1128
+2 = 885
+3 = 635
+
+
+BEST ACTUALL STRATEGY
+Bollinger Strategy + 10% and - 10% and STOP LOSS 10% in 4 hours and Ichimoku Strategy
+1 = 1101
+2 = 831
+3 = 915

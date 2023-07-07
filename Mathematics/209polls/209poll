@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+##
+## EPITECH PROJECT, 2023
+## B-MAT-400-PAR-4-1-208dowels
+## File description:
+## 209poll
+##
+
+import sys
+from math import sqrt
+
+def help_usage() -> None:
+    print("""USAGE
+    ./209poll pSize sSize p
+    \nDESCRIPTION
+    pSize\tsize of the population
+    sSize\tsize of the sample (supposed to be representative)
+    p\t\tpercentage of voting intentions for a specific candidate""")
+
+def check_arg() -> None:
+    if len(sys.argv) == 2 and sys.argv[1] == "-h":
+        help_usage()
+        sys.exit(0)
+    elif len(sys.argv) != 4:
+        sys.exit(84)
+    else:
+        try:
+            psize = int(sys.argv[1])
+            ssize = int(sys.argv[2])
+            p = float(sys.argv[3])
+            if (psize <= 0 or ssize <= 0 or p < 0 or p > 100 or ssize > psize):
+                sys.exit(84)
+        except ValueError:
+            sys.exit(84)
+
+def compute_confidence_interval(psize, ssize, p):
+    variance = (((p * (100 - p)) / 10000) / ssize) * ((psize - ssize) / (psize - 1))
+    variance = round(variance, 6)
+
+    amplitude_95 = (1.96 * sqrt(variance) * 2) / 2 * 100
+    amplitude_99 = (2.58 * sqrt(variance) * 2) / 2 * 100
+
+    lower_95 = format(round(p - amplitude_95, 2), ".2f")
+    upper_95 = format(round(p + amplitude_95, 2), ".2f")
+    lower_99 = format(round(p - amplitude_99, 2), ".2f")
+    upper_99 = format(round(p + amplitude_99, 2), ".2f")
+
+    print("Variance:\t\t", format(variance, ".6f"))
+    print("95% confidence interval: [{}%; {}%]".format(lower_95, upper_95))
+    print("99% confidence interval: [{}%; {}%]".format(lower_99, upper_99))
+
+def printer(psize, ssize, p) -> None:
+    print("Population size:\t", psize)
+    print("Sample size:\t\t", ssize)
+    print("Voting intentions:\t", format(p, ".2f") + "%")
+
+    compute_confidence_interval(psize, ssize, p)
+
+def main() -> None:
+    check_arg()
+
+    if len(sys.argv) == 4:
+        psize = int(sys.argv[1])
+        ssize = int(sys.argv[2])
+        p = float(sys.argv[3])
+        printer(psize, ssize, p)
+
+if __name__ == "__main__":
+    main()

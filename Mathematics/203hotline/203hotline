@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+##
+## EPITECH PROJECT, 2023
+## 203hotline
+## File description:
+## 203hotline
+##
+
+import sys
+import math
+import time
+
+#### HELP USAGE ####
+
+def print_help():
+    print("USAGE")
+    print("\t./203hotline n k\n")
+    print("DESCRIPTION")
+    print("\tn\tn value for the computation of C(n, k)")
+    print("\tk\tk value for the computation of C(n, k)")
+
+################################################
+
+#### CHECK ARGS ####
+
+def check_args():
+    if len(sys.argv) == 2 and sys.argv[1] == "-h":
+        print_help()
+        exit(0)
+    if len(sys.argv) != 2 and len(sys.argv) != 3:
+        print("Invalid number of argument.")
+        exit(84)
+    if len(sys.argv) == 2:
+        try:
+            int(sys.argv[1])
+        except ValueError:
+            print("First argument is not a number")
+            exit(84)
+    elif len(sys.argv) == 3:
+        try:
+            int(sys.argv[1])
+            int(sys.argv[2])
+        except ValueError:
+            print("First and Second Argument are not number.")
+            exit(84)
+    else:
+        print("Invalid number of argument.")
+        exit(84)
+
+##############################################
+
+##### COEFFICIENT BINOMIAL #####
+
+def coefficient_binomial(a, b):
+    if b > a:
+        return 0
+    if b == 0 or b == a:
+        return 1
+    numerator = 1
+    denominator = 1
+    for s in range(1, b + 1):
+        numerator *= a - s + 1
+        denominator *= s
+    return numerator // denominator
+
+##############################################
+
+##### DISTRIBUTION BINOMIAL #####
+
+def distribution_binomial(c, e):
+    resultat = []
+    j = 1 - e
+    for i in range(c + 1):
+        coeff = coefficient_binomial(3500, i)
+        prob = coeff * (e ** i) * (j ** (3500 - i))
+        resultat.append(prob)
+    return resultat
+
+##############################################
+
+##### DISTRIBUTION POISSON #####
+
+def distribution_poisson(c, lambd):
+    distrib = [0] * (c+1)
+    distrib[0] = math.exp(-lambd)
+    for i in range(1, c+1):
+        distrib[i] = distrib[i-1] * lambd / i
+    return distrib
+
+##############################################
+
+#### MAIN ####
+
+def main():
+
+    check_args()
+
+    if len(sys.argv) == 3:
+        a = int(sys.argv[1])
+        b = int(sys.argv[2])
+        resultat = coefficient_binomial(a, b)
+        print(f"{b}-combinations of a set of size {a}:")
+        print(resultat)
+        return
+
+    if len(sys.argv) == 2:
+        c = 50
+        d = int(sys.argv[1])
+        e = 1/ ((8 * 3600) / d)
+        ff = 3500 * d / (8 * 3600)
+        print("Binomial distribution:")
+        timer = time.time()
+        distrib = distribution_binomial(c, e)
+        for i, prob in enumerate(distrib):
+            print(f"{i} -> {prob:.3f}", end="")
+            if (i != 50):
+                if (i % 5 == 4):
+                    print("\n", end="")
+                else:
+                    print(" ", end="")
+        print()
+        overloader = sum(distrib[26:])
+        print(f"Overload: {overloader:.1%}")
+        print(f"Computation time: {(time.time() - timer)*1000:.2f} ms")
+        print("\n", end="")
+        print("Poisson distribution:")
+        timer = time.time()
+        distrib = distribution_poisson(c, ff)
+        for k, prob in enumerate(distrib):
+            print(f"{k} -> {prob:.3f}", end="")
+            if (k != 50):
+                if (k % 5 == 4):
+                    print("\n", end="")
+                else:
+                    print(" ", end="")
+        print()
+        overloader = sum(distrib[26:])
+        print(f"Overload: {overloader:.1%}")
+        print(f"Computation time: {(time.time() - timer)*1000:.2f} ms")
+        return
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,15 @@
+[Unit]
+Description=Result service
+
+[Service]
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=PORT=3000
+Environment=POSTGRESQL_USER={{ db_username }}
+Environment=POSTGRESQL_PASSWORD={{ db_password }}
+Environment=POSTGRESQL_HOST={{ postgresql }}
+Environment=POSTGRESQL_PORT={{ db_port }}
+Environment=POSTGRESQL_DB={{ db_name }}
+ExecStart=node server.js
+User=viktor
+WorkingDirectory=/var/www/result
+Restart=always
